@@ -17,7 +17,7 @@ public class LandActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_launch);
+        setContentView(R.layout.activity_land);
 
         // initialize variables
         discover = (Button) findViewById(R.id.discover);

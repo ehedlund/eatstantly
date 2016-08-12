@@ -1,10 +1,10 @@
 package com.eatstantly.eatstantly;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
 import android.os.Bundle;
-import android.view.View;
 import android.content.Intent;
 
 /**
@@ -12,47 +12,28 @@ import android.content.Intent;
  */
 public class LaunchActivity extends AppCompatActivity {
     // declare variables
-    static final String clientID = "11436d58cf5c425cb59a97bb61bf1789";
-    static final String redirect = "http://eatstantly.com";
-
-    Button discover;
-    Button search;
-
+    private static final String clientID = "11436d58cf5c425cb59a97bb61bf1789";
+    private static final String redirect = "http://eatstantly.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
 
-        // initialize variables
-        discover = (Button) findViewById(R.id.discover);
-        search = (Button) findViewById(R.id.search);
-
-        // set up buttons
-        search.setOnClickListener(
-                new View.OnClickListener() {
-                    public void onClick(View v) {
-                        Intent searchIntent = new Intent(LaunchActivity.this, SearchActivity.class);
-                        LaunchActivity.this.startActivity(searchIntent);
-                    }
-                }
-        );
-
-        /*
-        // authenticate with instagram
-        String uri = "https://api.instagram.com/oauth/authorize/?client_id=" + clientID + "&redirect_uri=" + redirect + "&response_type=token";
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        startActivity(browserIntent);
-        */
+        // check for authentication
+        SharedPreferences sp = getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        if (sp.contains("token")) {
+            // launch LandActivity
+            String token = sp.getString("token", "error");
+            if (! token.equals("error")) {
+                Intent landIntent = new Intent(LaunchActivity.this, LandActivity.class);
+                LaunchActivity.this.startActivity(landIntent);
+            }
+        }
+        else {
+            // authenticate
+            String url = "https://api.instagram.com/oauth/authorize/?client_id=" + clientID + "&redirect_uri=" + redirect + "&response_type=token";
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        }
     }
-
-    /*
-    // get the instagram access token
-    @Override
-    protected void onResume() {
-        // parse redirect URI
-        // TODO: get URI
-        super.onResume();
-    }
-    */
 }

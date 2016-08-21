@@ -44,7 +44,7 @@ public class SearchActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
 
     // constants
-    private static final String key = "AIzaSyA1uwO-EgnunfaxNjs5QgoAD6gr-65DqIg";
+    private static final String key = "AIzaSyAJssY_hmpCAb2NqUB7ZKFFahJEVifmExw";
     private static final double metersInMile = 1609.34;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private static final String TAG = SearchActivity.class.getSimpleName();

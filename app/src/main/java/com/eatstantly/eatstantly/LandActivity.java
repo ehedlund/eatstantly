@@ -32,5 +32,16 @@ public class LandActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        discover.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Intent discoverIntent = new Intent(LandActivity.this, DiscoverActivity.class);
+                        LandActivity.this.startActivity(discoverIntent);
+                    }
+                }
+        );
+
+
     }
 }

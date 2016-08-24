@@ -27,16 +27,21 @@ import javax.net.ssl.HttpsURLConnection;
 import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import org.json.*;
+
 
 public class DiscoverActivity extends AppCompatActivity {
 
     private static final String TAG = DiscoverActivity.class.getSimpleName();
     private static final String follows_query = "https://api.instagram.com/v1/users/self/follows?access_token=";
-    private static final String followed_by_query = "https://api.instagram.com/v1/users/self/followed-by?access_token=";
+    private static final String recently_liked_query = "https://api.instagram.com/v1/users/self/media/liked?access_token=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +50,35 @@ public class DiscoverActivity extends AppCompatActivity {
         SharedPreferences mPrefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
         String token = mPrefs.getString("token", "N/A");
         Log.e(TAG, " the token is " + token);
-        String follows = null;
-        String followed_by = null;
+        String follows_response = null;
+        ArrayList<String> follows = new ArrayList<String>();
         try {
-            follows = new makeRequest().execute(follows_query + token).get();
-            followed_by = new makeRequest().execute(followed_by_query + token).get();
+            follows_response = new makeRequest().execute(follows_query + token).get();
+            JSONObject followsJSON = new JSONObject(follows_response);
+            for (int i = 0; i < followsJSON.getJSONArray("data").length(); i++) {
+                JSONObject user_data = new JSONObject(followsJSON.getJSONArray("data").get(i).toString()); 
+                follows.add(user_data.getString("username"));
+            }
+            //To find the most popular items, we will keep track of how many likes different
+            //photos have from the people that the user follows
+            HashMap<String, Integer> likes_from_following = new HashMap<String,  Integer>();
+            for (String user : follows) {
+                //TODO: have a way to get the access token of different users
+                JSONObject recently_liked_response = new JSONObject(new makeRequest().execute(recently_liked_query /*+ access_token[user]*/).get());
+                for (int i = 0; i < recently_liked_response.getJSONArray("data").length(); i++) {
+                    String id = (new JSONObject(recently_liked_response.getJSONArray("data").get(i).toString())).getString("id");
+                    likes_from_following.set(id, likes_from_following.getOrDefault(id, 0) + 1);
+                }
+            }
+
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        Log.e(TAG, "" + follows);
-        Log.e(TAG, "" + followed_by);
     }
 
 

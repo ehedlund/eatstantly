@@ -31,39 +31,30 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
-        </activity>
-
-        <activity
-            android:name=".LaunchActivity" >
+            android:label="@string/title_activity_maps"></activity>
+        <activity android:name=".LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".SearchActivity" >
-        </activity>
-
-        <activity
-            android:name=".ListActivity" >
-        </activity>
-
-        <activity
-            android:name=".IntermediateActivity" >
+        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".ListActivity"></activity>
+        <activity android:name=".IntermediateActivity">
             <intent-filter>
-                <data android:scheme="http" android:host="www.eatstantly.com"/>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity >
+                <data
+                    android:host="www.eatstantly.com"
+                    android:scheme="http" />
 
-        <activity
-            android:name=".LandActivity" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
+        <activity android:name=".LandActivity"></activity>
+        <activity android:name=".DiscoverActivity"></activity>
     </application>
 
 </manifest>

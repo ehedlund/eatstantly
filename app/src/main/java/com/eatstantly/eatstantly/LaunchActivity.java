@@ -32,7 +32,7 @@ public class LaunchActivity extends AppCompatActivity {
         }
         else {
             // authenticate
-            String url = "https://api.instagram.com/oauth/authorize/?client_id=" + clientID + "&redirect_uri=" + redirect + "&response_type=token";
+            String url = "https://api.instagram.com/oauth/authorize/?client_id=" + clientID + "&redirect_uri=" + redirect + "&response_type=token&scope=basic+public_content";
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         }
     }

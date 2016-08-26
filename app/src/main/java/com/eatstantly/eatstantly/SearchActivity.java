@@ -154,8 +154,6 @@ public class SearchActivity extends AppCompatActivity implements
 
                             baseURL += "rankby=distance&";
                             baseURL += "type=restaurant";
-
-                            Log.e(TAG, " " + baseURL);
                         }
                         // make request
                         new makeRequest().execute(baseURL);

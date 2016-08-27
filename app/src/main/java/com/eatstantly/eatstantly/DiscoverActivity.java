@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -61,15 +62,30 @@ public class DiscoverActivity extends AppCompatActivity {
             }
             //To find the most popular items, we will keep track of how many likes different
             //photos have from the people that the user follows
-            HashMap<String, Integer> likes_from_following = new HashMap<String,  Integer>();
+            HashMap<String, Integer> likes_from_following = new HashMap<String, Integer>();
             for (String user : follows) {
                 //TODO: have a way to get the access token of different users
                 JSONObject recently_liked_response = new JSONObject(new makeRequest().execute(recently_liked_query /*+ access_token[user]*/).get());
                 for (int i = 0; i < recently_liked_response.getJSONArray("data").length(); i++) {
                     String id = (new JSONObject(recently_liked_response.getJSONArray("data").get(i).toString())).getString("id");
-                    likes_from_following.set(id, likes_from_following.getOrDefault(id, 0) + 1);
+                    int currentValue;
+                    if (likes_from_following.get(id) != null) {
+                        currentValue = likes_from_following.get(id) + 1;
+                    }
+                    else {
+                        currentValue = 1;
+                    }
+                    likes_from_following.put(id, currentValue);
                 }
             }
+
+            PriorityQueue<Node> pqueue = new PriorityQueue<Node>();
+            for (String key : likes_from_following.keySet()) {
+                Node node = new Node(key, likes_from_following.get(key));
+                pqueue.add(node);
+            }
+            
+
 
 
         } catch (InterruptedException e) {
@@ -80,6 +96,31 @@ public class DiscoverActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    private class Node {
+        String id;
+        int priority;
+
+
+        public Node(String media_id, int new_priority) {
+            id = media_id;
+            priority = new_priority;
+        }
+
+        public int compareTo(Node that) {
+            if (this.priority > that.priority) {
+                return 1;
+            }
+            else if (this.priority == that.priority) {
+                return 0;
+            }
+            else {
+                return -1;
+            }
+        }
+    }
+
+
 
 
 

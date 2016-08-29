@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -212,10 +213,13 @@ public class SearchActivity extends AppCompatActivity implements
         protected void onPostExecute(String output) {
             if (output != null) {
                 reply = output;
+                // create dummy arraylist
+                ArrayList<Restaurant> restaurants = null;
 
                 // launch results
                 Intent listIntent = new Intent(SearchActivity.this, ListActivity.class);
                 listIntent.putExtra("Reply", reply);
+                listIntent.putParcelableArrayListExtra("Restaurants", restaurants);
                 SearchActivity.this.startActivity(listIntent);
             }
         }

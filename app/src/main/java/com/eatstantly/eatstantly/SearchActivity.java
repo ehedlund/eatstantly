@@ -80,10 +80,10 @@ public class SearchActivity extends AppCompatActivity implements
         confirmSearch = (Button) findViewById(R.id.confirmSearch);
         useCurrent = (CheckBox) findViewById(R.id.useCurrent);
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        distances = (Spinner) findViewById(R.id.distances);
+        // distances = (Spinner) findViewById(R.id.distances);
 
         // set up distance spinner
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.distance_array, android.R.layout.simple_spinner_item);
+        /* ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.distance_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         distances.setAdapter(adapter);
         distances.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -103,7 +103,7 @@ public class SearchActivity extends AppCompatActivity implements
             public void onNothingSelected(AdapterView<?> parent) {
                 distanceSelected = 1;
             }
-        });
+        }); */
 
         // autocomplete fragment
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {

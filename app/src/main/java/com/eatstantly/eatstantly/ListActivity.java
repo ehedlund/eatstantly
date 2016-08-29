@@ -38,6 +38,7 @@ import org.json.JSONException;
 public class ListActivity extends AppCompatActivity {
     // declare variables
     private static final String defaultIcon = "https://2.bp.blogspot.com/-7_0YNV5xoAY/V8OOvlW_mZI/AAAAAAAAGPQ/NP3JlgApad0YhaCC0djfG3FhD3Wh1mEsACLcB/s1600/default_icon.png";
+    private static final String defaultIconSmall = "https://2.bp.blogspot.com/-Jh-79w7LRG8/V8SJfjk2H3I/AAAAAAAAGPg/Nf2_6N7-hgQIYjQU3E95MZyBYQA3qe11QCLcB/s1600/default_icon_small.png";
     private ArrayList<Restaurant> restaurants;
     private ListView list;
     private Toolbar myToolbar;
@@ -127,7 +128,6 @@ public class ListActivity extends AppCompatActivity {
                         restaurants.remove(r);
                         length--;
                     }
-
                     // place exists on instagram
                     else {
                         baseURL = "https://api.instagram.com/v1/locations/";
@@ -137,37 +137,48 @@ public class ListActivity extends AppCompatActivity {
                             photoResponse = new MyAsyncTask().execute(baseURL).get();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                            photoResponse = "error";
+                            photoResponse = null;
                         } catch (ExecutionException e) {
                             e.printStackTrace();
-                            photoResponse = "error";
+                            photoResponse = null;
                         }
-                        JSONArray photoResults = new JSONArray(new JSONObject(photoResponse).getString("data"));
-                        // TODO: sort photos before setting icon!!
-                        int numPhotos = photoResults.length();
-                        switch (numPhotos) {
-                            case 0:
-                                r.icon_1 = defaultIcon;
-                                r.icon_2 = defaultIcon;
-                                r.icon_3 = defaultIcon;
-                                break;
-                            case 1:
-                                r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                r.icon_2 = defaultIcon;
-                                r.icon_3 = defaultIcon;
-                                break;
-                            case 2:
-                                r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                r.icon_2 = photoResults.getJSONObject(1).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                r.icon_3 = defaultIcon;
-                                break;
-                            default:
-                                r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                r.icon_2 = photoResults.getJSONObject(1).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                r.icon_3 = photoResults.getJSONObject(2).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                break;
+
+                        if (photoResponse == null) {
+                            restaurants.remove(r);
+                            length--;
                         }
-                        i++;
+                        else {
+                            JSONArray photoResults = new JSONArray(new JSONObject(photoResponse).getString("data"));
+                            // TODO: sort photos before setting icon!!
+                            int numPhotos = photoResults.length();
+                            switch (numPhotos) {
+                                case 0:
+                                    r.icon_1 = defaultIcon;
+                                    r.icon_2 = defaultIcon;
+                                    r.icon_3 = defaultIcon;
+                                    r.icon_1_small = defaultIconSmall;
+                                    break;
+                                case 1:
+                                    r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_2 = defaultIcon;
+                                    r.icon_3 = defaultIcon;
+                                    r.icon_1_small = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
+                                    break;
+                                case 2:
+                                    r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_2 = photoResults.getJSONObject(1).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_3 = defaultIcon;
+                                    r.icon_1_small = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
+                                    break;
+                                default:
+                                    r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_2 = photoResults.getJSONObject(1).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_3 = photoResults.getJSONObject(2).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_1_small = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
+                                    break;
+                            }
+                            i++;
+                        }
                     }
                 }
             } catch (JSONException e){

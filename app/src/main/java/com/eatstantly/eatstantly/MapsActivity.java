@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,10 +40,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // get restaurants
         restaurants = getIntent().getParcelableArrayListExtra("Restaurants");
 
-        // initialize variables
-        myToolbar = (Toolbar) findViewById(R.id.myToolbar);
-
         // show toolbar
+        myToolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(myToolbar);
 
         // obtain the SupportMapFragment and get notified when the map is ready to be used
@@ -64,25 +63,48 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        /* Thread thread = new Thread() {
+        final int length = restaurants.size();
+        final Bitmap[] icons = new Bitmap[length];
+
+        // get icons
+        Thread thread = new Thread() {
             @Override
             public void run() {
-                int length = restaurants.size();
                 for (int i = 0; i < length; i++) {
                     Restaurant r = restaurants.get(i);
-
-                    Double lat = Double.parseDouble(r.latitude);
-                    Double lng = Double.parseDouble(r.longitude);
-                    LatLng currentLL = new LatLng(lat, lng);
-
-                    mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromURL(r.icon_1)))
-                            .position(currentLL));
+                    Bitmap bm = getBitmapFromURL(r.icon_1_small);
+                    icons[i] = bm;
                 }
             }
         };
+        try {
+            thread.start();
+            thread.join();
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        thread.run(); */
+        // create markers
+        Double totalLat = 0.0;
+        Double totalLong = 0.0;
+        for (int i = 0; i < length; i++) {
+            Restaurant r = restaurants.get(i);
+
+            Double lat = Double.parseDouble(r.latitude);
+            Double lng = Double.parseDouble(r.longitude);
+
+            totalLat += lat;
+            totalLong += lng;
+
+            LatLng currentLL = new LatLng(lat, lng);
+
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(icons[i]))
+                    .position(currentLL));
+        }
+
+        // move camera
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(totalLat/length, totalLong/length), 16));
     }
 
     @Override

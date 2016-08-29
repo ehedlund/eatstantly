@@ -17,6 +17,7 @@ public class Restaurant implements Parcelable {
     String icon_1;
     String icon_2;
     String icon_3;
+    String locID;
 
     public Restaurant(JSONObject js) {
         try {
@@ -24,9 +25,11 @@ public class Restaurant implements Parcelable {
             address = js.getString("vicinity");
             latitude = js.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = js.getJSONObject("geometry").getJSONObject("location").getString("lng");
-            icon_1 = "none";
-            icon_2 = "none";
-            icon_3 = "none";
+            icon_1 = null;
+            icon_2 = null;
+            icon_3 = null;
+            locID = null;
+
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -35,7 +38,7 @@ public class Restaurant implements Parcelable {
 
     // parcelling part
     public Restaurant(Parcel in){
-        String[] data = new String[7];
+        String[] data = new String[8];
 
         in.readStringArray(data);
         this.name = data[0];
@@ -45,6 +48,7 @@ public class Restaurant implements Parcelable {
         this.icon_1 = data[4];
         this.icon_2 = data[5];
         this.icon_3 = data[6];
+        this.locID = data[7];
     }
 
     @Override
@@ -54,7 +58,7 @@ public class Restaurant implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[] {this.name, this.address, this.latitude, this.longitude, this.icon_1, this.icon_2, this.icon_3});
+        dest.writeStringArray(new String[] {this.name, this.address, this.latitude, this.longitude, this.icon_1, this.icon_2, this.icon_3, this.locID});
     }
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Restaurant createFromParcel(Parcel in) {

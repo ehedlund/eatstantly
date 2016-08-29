@@ -1,6 +1,8 @@
 package com.eatstantly.eatstantly;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,9 +15,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -57,20 +64,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // add markers for each restaurant
-        int length = restaurants.size();
-        for (int i = 0; i < length; i++) {
-            Double lat = Double.parseDouble(restaurants.get(i).latitude);
-            Double lng = Double.parseDouble(restaurants.get(i).longitude);
-            LatLng ll = new LatLng(lat, lng);
-            mMap.addMarker(new MarkerOptions().position(ll));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
-        }
+        /* Thread thread = new Thread() {
+            @Override
+            public void run() {
+                int length = restaurants.size();
+                for (int i = 0; i < length; i++) {
+                    Restaurant r = restaurants.get(i);
 
-        /* // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney)); */
+                    Double lat = Double.parseDouble(r.latitude);
+                    Double lng = Double.parseDouble(r.longitude);
+                    LatLng currentLL = new LatLng(lat, lng);
+
+                    mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromURL(r.icon_1)))
+                            .position(currentLL));
+                }
+            }
+        };
+
+        thread.run(); */
     }
 
     @Override
@@ -96,6 +108,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

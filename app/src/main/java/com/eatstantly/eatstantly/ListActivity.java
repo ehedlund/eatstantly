@@ -95,36 +95,43 @@ public class ListActivity extends AppCompatActivity {
                     }
 
                     // match to correct location
-                    // TODO: better name matching process?
-                    String locID = null;
                     JSONArray placeResults = new JSONArray(new JSONObject(locationResponse).getString("data"));
                     int jsonLength = placeResults.length();
+
+                    // loop for strict matches
                     for (int j = 0; j < jsonLength; j++) {
                         JSONObject result = placeResults.getJSONObject(j);
                         String instaName = result.getString("name");
-                        // strict match
                         if (instaName.equals(r.name)) {
                             // found location id
-                            locID = result.getString("id");
-                            break;
-                        }
-                        // near match
-                        else if (instaName.contains(r.name) || r.name.contains(instaName)) {
-                            // found location id
-                            locID = result.getString("id");
+                            r.locID = result.getString("id");
                             break;
                         }
                     }
 
+                    // loop for near matches
+                    if (r.locID == null) {
+                        for (int j = 0; j < jsonLength; j++) {
+                            JSONObject result = placeResults.getJSONObject(j);
+                            String instaName = result.getString("name");
+                            if (instaName.contains(r.name) || r.name.contains(instaName)) {
+                                // found location id
+                                r.locID = result.getString("id");
+                                break;
+                            }
+                        }
+                    }
+
                     // place doesn't exist on instagram
-                    if (locID == null) {
+                    if (r.locID == null) {
                         restaurants.remove(r);
                         length--;
                     }
+
                     // place exists on instagram
                     else {
                         baseURL = "https://api.instagram.com/v1/locations/";
-                        baseURL += locID + "/media/recent?access_token=" + token;
+                        baseURL += r.locID + "/media/recent?access_token=" + token;
                         String photoResponse;
                         try {
                             photoResponse = new MyAsyncTask().execute(baseURL).get();

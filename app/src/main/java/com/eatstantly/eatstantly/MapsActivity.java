@@ -18,6 +18,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
@@ -100,7 +101,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromBitmap(icons[i]))
-                    .position(currentLL));
+                    .position(currentLL)
+                    .title(r.name)
+                    .snippet(r.address));
         }
 
         // move camera

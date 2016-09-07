@@ -36,7 +36,7 @@ package com.eatstantly.eatstantly;
  * This code has been adapted from Apache Commons Lang 3.3.
  * </p>
  */
-public class JaroWinklerDistance /* implements EditDistance<Double> */ {
+public class JaroWinklerDistance {
 
     /**
      * The default prefix length limit set to four.
@@ -73,7 +73,6 @@ public class JaroWinklerDistance /* implements EditDistance<Double> */ {
      * @return result distance
      * @throws IllegalArgumentException if either String input {@code null}
      */
-    // @Override
     public Double apply(CharSequence left, CharSequence right) {
         final double defaultScalingFactor = 0.1;
         final double percentageRoundValue = 100.0;

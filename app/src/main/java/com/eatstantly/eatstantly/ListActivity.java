@@ -39,6 +39,7 @@ public class ListActivity extends AppCompatActivity {
     // declare variables
     private static final String defaultIcon = "https://2.bp.blogspot.com/-7_0YNV5xoAY/V8OOvlW_mZI/AAAAAAAAGPQ/NP3JlgApad0YhaCC0djfG3FhD3Wh1mEsACLcB/s1600/default_icon.png";
     private static final String defaultIconSmall = "https://2.bp.blogspot.com/-Jh-79w7LRG8/V8SJfjk2H3I/AAAAAAAAGPg/Nf2_6N7-hgQIYjQU3E95MZyBYQA3qe11QCLcB/s1600/default_icon_small.png";
+    private static final double SIMILARITY_THRESHOLD = 0.8;
     private ArrayList<Restaurant> restaurants;
     private ListView list;
     private Toolbar myToolbar;
@@ -99,28 +100,25 @@ public class ListActivity extends AppCompatActivity {
                     JSONArray placeResults = new JSONArray(new JSONObject(locationResponse).getString("data"));
                     int jsonLength = placeResults.length();
 
-                    // loop for strict matches
+                    // find closest match
+                    JaroWinklerDistance distance = new JaroWinklerDistance();
+                    double max = 0.0;
+                    String maxID = null;
+
                     for (int j = 0; j < jsonLength; j++) {
                         JSONObject result = placeResults.getJSONObject(j);
                         String instaName = result.getString("name");
-                        if (instaName.equals(r.name)) {
-                            // found location id
-                            r.locID = result.getString("id");
-                            break;
+
+                        double jwd = distance.apply(r.name, instaName);
+                        if (jwd > max) {
+                            max = jwd;
+                            maxID = result.getString("id");
                         }
                     }
 
-                    // loop for near matches
-                    if (r.locID == null) {
-                        for (int j = 0; j < jsonLength; j++) {
-                            JSONObject result = placeResults.getJSONObject(j);
-                            String instaName = result.getString("name");
-                            if (instaName.contains(r.name) || r.name.contains(instaName)) {
-                                // found location id
-                                r.locID = result.getString("id");
-                                break;
-                            }
-                        }
+                    // check if match is good
+                    if (max > SIMILARITY_THRESHOLD) {
+                        r.locID = maxID;
                     }
 
                     // place doesn't exist on instagram
@@ -318,4 +316,9 @@ public class ListActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+
+
+
 }

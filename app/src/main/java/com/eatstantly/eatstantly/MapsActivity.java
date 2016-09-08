@@ -6,19 +6,16 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
@@ -32,6 +29,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private Toolbar myToolbar;
     private ArrayList<Restaurant> restaurants;
+    // private LatLng selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +39,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // get restaurants
         restaurants = getIntent().getParcelableArrayListExtra("Restaurants");
 
+        // get selected location
+        /* String selectedLocation = getIntent().getExtras().getString("LatLng");
+        int split = selectedLocation.indexOf(",");
+        Double latit = Double.parseDouble(selectedLocation.substring(10, split));
+        Double longit = Double.parseDouble(selectedLocation.substring(split + 1, selectedLocation.length() - 1));
+        selected = new LatLng(latit, longit); */
+
         // show toolbar
         myToolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(myToolbar);
 
         // obtain the SupportMapFragment and get notified when the map is ready to be used
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
@@ -85,7 +89,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
 
-        // create markers
+        // create markers for restaurants
         Double totalLat = 0.0;
         Double totalLong = 0.0;
         for (int i = 0; i < length; i++) {
@@ -106,8 +110,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .snippet(r.address));
         }
 
+        // create marker for search location
+        // mMap.addMarker(new MarkerOptions().position(selected));
+
         // move camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(totalLat/length, totalLong/length), 16));
+        LatLng avg = new LatLng(totalLat/length, totalLong/length);
+        // LatLng avg = new LatLng((totalLat / length + selected.latitude) / 2, (totalLong / length + selected.longitude) / 2);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(avg, 16));
     }
 
     @Override

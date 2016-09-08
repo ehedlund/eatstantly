@@ -140,24 +140,27 @@ public class SearchActivity extends AppCompatActivity implements
                         }
                         // use selected location
                         else {
-                            baseURL += "key=" + key + "&";
+                            if (selectedLocation != null) {
+                                baseURL += "key=" + key + "&";
 
-                            // get location
-                            LatLng latAndLong = selectedLocation.getLatLng();
-                            String fullString = latAndLong.toString();
-                            int length = fullString.length();
-                            String latLong = fullString.substring(10, length - 1);
-                            baseURL += "location=" + latLong + "&";
+                                // get location
+                                LatLng latAndLong = selectedLocation.getLatLng();
+                                String fullString = latAndLong.toString();
+                                int length = fullString.length();
+                                String latLong = fullString.substring(10, length - 1);
+                                baseURL += "location=" + latLong + "&";
 
-                            // get radius
-                            // double distInMeters = distanceSelected * metersInMile;
-                            // baseURL += "radius=" + distInMeters + "&";
+                                // get radius
+                                // double distInMeters = distanceSelected * metersInMile;
+                                // baseURL += "radius=" + distInMeters + "&";
 
-                            baseURL += "rankby=distance&";
-                            baseURL += "type=restaurant";
+                                baseURL += "rankby=distance&";
+                                baseURL += "type=restaurant";
+
+                                // make request
+                                new makeRequest().execute(baseURL);
+                            }
                         }
-                        // make request
-                        new makeRequest().execute(baseURL);
                     }
                 }
         );
@@ -220,6 +223,7 @@ public class SearchActivity extends AppCompatActivity implements
                 Intent listIntent = new Intent(SearchActivity.this, ListActivity.class);
                 listIntent.putExtra("Reply", reply);
                 listIntent.putParcelableArrayListExtra("Restaurants", restaurants);
+                // listIntent.putExtra("LatLng", selectedLocation.getLatLng().toString());
                 SearchActivity.this.startActivity(listIntent);
             }
         }

@@ -41,4 +41,29 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/restaurant_name" />
 
+    <TextView
+        android:id="@+id/rating_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/restaurant_address"
+        android:text="Rating: "/>
+
+    <RatingBar
+        android:id="@+id/rating_bar"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/restaurant_address"
+        android:layout_toRightOf="@+id/rating_label"
+        android:stepSize="0.1"
+        android:isIndicator="true"/>
+
+    <TextView
+        android:id="@+id/price_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/restaurant_address"
+        android:layout_toRightOf="@+id/rating_bar"
+        android:layout_marginLeft="5dp"/>
+
 </RelativeLayout>

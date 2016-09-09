@@ -40,10 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by emilyhedlund on 8/8/16.
  */
-public class SearchActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
-
+public class SearchActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     // constants
     private static final String key = "AIzaSyAJssY_hmpCAb2NqUB7ZKFFahJEVifmExw";
     private static final double metersInMile = 1609.34;
@@ -80,10 +77,10 @@ public class SearchActivity extends AppCompatActivity implements
         confirmSearch = (Button) findViewById(R.id.confirmSearch);
         useCurrent = (CheckBox) findViewById(R.id.useCurrent);
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        // distances = (Spinner) findViewById(R.id.distances);
+        /* distances = (Spinner) findViewById(R.id.distances);
 
         // set up distance spinner
-        /* ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.distance_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.distance_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         distances.setAdapter(adapter);
         distances.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -118,7 +115,7 @@ public class SearchActivity extends AppCompatActivity implements
             }
         });
 
-        // check box action
+        /* // check box action
         useCurrent.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -126,7 +123,7 @@ public class SearchActivity extends AppCompatActivity implements
                         getLocation();
                     }
                 }
-        );
+        ); */
 
         // search button action
         confirmSearch.setOnClickListener(
@@ -140,24 +137,27 @@ public class SearchActivity extends AppCompatActivity implements
                         }
                         // use selected location
                         else {
-                            baseURL += "key=" + key + "&";
+                            if (selectedLocation != null) {
+                                baseURL += "key=" + key + "&";
 
-                            // get location
-                            LatLng latAndLong = selectedLocation.getLatLng();
-                            String fullString = latAndLong.toString();
-                            int length = fullString.length();
-                            String latLong = fullString.substring(10, length - 1);
-                            baseURL += "location=" + latLong + "&";
+                                // get location
+                                LatLng latAndLong = selectedLocation.getLatLng();
+                                String fullString = latAndLong.toString();
+                                int length = fullString.length();
+                                String latLong = fullString.substring(10, length - 1);
+                                baseURL += "location=" + latLong + "&";
 
-                            // get radius
-                            // double distInMeters = distanceSelected * metersInMile;
-                            // baseURL += "radius=" + distInMeters + "&";
+                                // get radius
+                                // double distInMeters = distanceSelected * metersInMile;
+                                // baseURL += "radius=" + distInMeters + "&";
 
-                            baseURL += "rankby=distance&";
-                            baseURL += "type=restaurant";
+                                baseURL += "rankby=distance&";
+                                baseURL += "type=restaurant";
+
+                                // make request
+                                new makeRequest().execute(baseURL);
+                            }
                         }
-                        // make request
-                        new makeRequest().execute(baseURL);
                     }
                 }
         );
@@ -220,13 +220,14 @@ public class SearchActivity extends AppCompatActivity implements
                 Intent listIntent = new Intent(SearchActivity.this, ListActivity.class);
                 listIntent.putExtra("Reply", reply);
                 listIntent.putParcelableArrayListExtra("Restaurants", restaurants);
+                listIntent.putExtra("LatLng", selectedLocation.getLatLng().toString());
                 SearchActivity.this.startActivity(listIntent);
             }
         }
     }
 
     // get current location
-    @TargetApi(23)
+    /* @TargetApi(23)
     private void getLocation() {
         int hasPermission = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
         if (hasPermission == PackageManager.PERMISSION_GRANTED) {
@@ -274,7 +275,7 @@ public class SearchActivity extends AppCompatActivity implements
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
+    } */
 
     // necessary overrides for connecting/disconnecting
     @Override

@@ -26,8 +26,11 @@ public class LaunchActivity extends AppCompatActivity {
             // launch LandActivity
             String token = sp.getString("token", "error");
             if (! token.equals("error")) {
-                Intent landIntent = new Intent(LaunchActivity.this, LandActivity.class);
-                LaunchActivity.this.startActivity(landIntent);
+                /* Intent landIntent = new Intent(LaunchActivity.this, LandActivity.class);
+                LaunchActivity.this.startActivity(landIntent); */
+
+                Intent searchIntent = new Intent(LaunchActivity.this, SearchActivity.class);
+                LaunchActivity.this.startActivity(searchIntent);
             }
         }
         else {

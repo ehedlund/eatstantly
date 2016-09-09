@@ -29,7 +29,11 @@ public class IntermediateActivity extends AppCompatActivity {
         editor.commit();
 
         // launch LandActivity
-        Intent landIntent = new Intent(IntermediateActivity.this, LandActivity.class);
-        IntermediateActivity.this.startActivity(landIntent);
+        /* Intent landIntent = new Intent(IntermediateActivity.this, LandActivity.class);
+        IntermediateActivity.this.startActivity(landIntent); */
+
+        // launch SearchActivity
+        Intent searchIntent = new Intent(IntermediateActivity.this, SearchActivity.class);
+        IntermediateActivity.this.startActivity(searchIntent);
     }
 }

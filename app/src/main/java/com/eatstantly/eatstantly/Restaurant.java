@@ -17,8 +17,9 @@ public class Restaurant implements Parcelable {
     String address;
     String latitude;
     String longitude;
-    double rating;
     double score;
+    String rating;
+    String price;
     String icon_1;
     String icon_2;
     String icon_3;
@@ -31,8 +32,9 @@ public class Restaurant implements Parcelable {
             address = js.getString("vicinity");
             latitude = js.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = js.getJSONObject("geometry").getJSONObject("location").getString("lng");
-            rating = js.getDouble("rating");
             score = 0;
+            rating = js.getString("rating");
+            price = js.getString("price_level");
             icon_1 = null;
             icon_2 = null;
             icon_3 = null;
@@ -46,18 +48,20 @@ public class Restaurant implements Parcelable {
 
     // parcelling part
     public Restaurant(Parcel in){
-        String[] data = new String[9];
+        String[] data = new String[11];
 
         in.readStringArray(data);
         this.name = data[0];
         this.address = data[1];
         this.latitude = data[2];
         this.longitude = data[3];
-        this.icon_1 = data[4];
-        this.icon_2 = data[5];
-        this.icon_3 = data[6];
-        this.locID = data[7];
-        this.icon_1_small = data[8];
+        this.rating = data[4];
+        this.price = data[5];
+        this.icon_1 = data[6];
+        this.icon_2 = data[7];
+        this.icon_3 = data[8];
+        this.locID = data[9];
+        this.icon_1_small = data[10];
     }
 
     public void setScore(JSONArray photoResults) {
@@ -94,7 +98,7 @@ public class Restaurant implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[] {this.name, this.address, this.latitude, this.longitude, this.icon_1, this.icon_2, this.icon_3, this.locID, this.icon_1_small});
+        dest.writeStringArray(new String[] {this.name, this.address, this.latitude, this.longitude, this.rating, this.price, this.icon_1, this.icon_2, this.icon_3, this.locID, this.icon_1_small});
     }
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Restaurant createFromParcel(Parcel in) {

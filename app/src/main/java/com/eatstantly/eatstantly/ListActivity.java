@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -49,6 +50,7 @@ public class ListActivity extends AppCompatActivity {
     private ArrayList<Restaurant> restaurants;
     private ListView list;
     private Toolbar myToolbar;
+    private String selectedLocation;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,7 @@ public class ListActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String response = extras.getString("Reply");
         restaurants = extras.getParcelableArrayList("Restaurants");
+        selectedLocation = extras.getString("LatLng");
 
 
         // coming from SearchActivity
@@ -275,19 +278,49 @@ public class ListActivity extends AppCompatActivity {
 
                 Restaurant r = restaurants.get(position);
                 ImageView restaurantIcon = (ImageView)convertView.findViewById(R.id.restaurant_icon);
-                new GetLogo(restaurantIcon).execute(restaurants.get(position).icon_1);
+                new GetLogo(restaurantIcon).execute(r.icon_1);
 
                 ImageView restaurantIcon2 = (ImageView)convertView.findViewById(R.id.restaurant_icon_2);
-                new GetLogo(restaurantIcon2).execute(restaurants.get(position).icon_2);
+                new GetLogo(restaurantIcon2).execute(r.icon_2);
 
                 ImageView restaurantIcon3 = (ImageView)convertView.findViewById(R.id.restaurant_icon_3);
-                new GetLogo(restaurantIcon3).execute(restaurants.get(position).icon_3);
+                new GetLogo(restaurantIcon3).execute(r.icon_3);
 
                 TextView restaurantAddress = (TextView) convertView.findViewById(R.id.restaurant_address);
-                restaurantAddress.setText(restaurants.get(position).address);
+                restaurantAddress.setText(r.address);
 
                 TextView restaurantName = (TextView) convertView.findViewById(R.id.restaurant_name);
-                restaurantName.setText(restaurants.get(position).name);
+                restaurantName.setText(r.name);
+
+                float rating = 0.0f;
+                if (r.rating != null) {
+                    rating = Float.parseFloat(r.rating);
+                }
+
+                RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.rating_bar);
+                ratingBar.setRating(rating);
+
+                String priceString = null;
+                if (r.price != null) {
+                    switch (Integer.parseInt(r.price)) {
+                        case 0:  priceString = "free!";
+                            break;
+                        case 1:  priceString = "$";
+                            break;
+                        case 2:  priceString = "$$";
+                            break;
+                        case 3:  priceString = "$$$";
+                            break;
+                        case 4:  priceString = "$$$$";
+                            break;
+                    }
+                }
+                else {
+                    priceString = "unknown";
+                }
+
+                TextView priceLabel = (TextView) convertView.findViewById(R.id.price_label);
+                priceLabel.setText("Price: " + priceString);
 
                 return convertView;
             }
@@ -335,6 +368,7 @@ public class ListActivity extends AppCompatActivity {
                 item.setChecked(true);
                 Intent mapsIntent = new Intent(ListActivity.this, MapsActivity.class);
                 mapsIntent.putParcelableArrayListExtra("Restaurants", restaurants);
+                mapsIntent.putExtra("LatLng", selectedLocation);
                 ListActivity.this.startActivity(mapsIntent);
                 return true;
 
@@ -354,7 +388,6 @@ public class ListActivity extends AppCompatActivity {
         });
     }
 
-
     private double getPhotoScore(JSONObject p) {
         long unixTime = System.currentTimeMillis() / 1000L;
         try {
@@ -370,7 +403,9 @@ public class ListActivity extends AppCompatActivity {
         return 0;
     }
 
-
-
-
+    @Override
+    public void onBackPressed() {
+        Intent searchIntent = new Intent(ListActivity.this, SearchActivity.class);
+        ListActivity.this.startActivity(searchIntent);
+    }
 }

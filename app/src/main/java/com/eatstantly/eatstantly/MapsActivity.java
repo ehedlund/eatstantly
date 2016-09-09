@@ -29,7 +29,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private Toolbar myToolbar;
     private ArrayList<Restaurant> restaurants;
-    // private LatLng selected;
+    private LatLng selected;
+    private String selectedString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +41,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         restaurants = getIntent().getParcelableArrayListExtra("Restaurants");
 
         // get selected location
-        /* String selectedLocation = getIntent().getExtras().getString("LatLng");
-        int split = selectedLocation.indexOf(",");
-        Double latit = Double.parseDouble(selectedLocation.substring(10, split));
-        Double longit = Double.parseDouble(selectedLocation.substring(split + 1, selectedLocation.length() - 1));
-        selected = new LatLng(latit, longit); */
+        selectedString = getIntent().getExtras().getString("LatLng");
+        int split = selectedString.indexOf(",");
+        Double latit = Double.parseDouble(selectedString.substring(10, split));
+        Double longit = Double.parseDouble(selectedString.substring(split + 1, selectedString.length() - 1));
+        selected = new LatLng(latit, longit);
 
         // show toolbar
         myToolbar = (Toolbar) findViewById(R.id.myToolbar);
@@ -111,12 +112,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         // create marker for search location
-        // mMap.addMarker(new MarkerOptions().position(selected));
+        mMap.addMarker(new MarkerOptions().position(selected));
 
         // move camera
-        LatLng avg = new LatLng(totalLat/length, totalLong/length);
+        totalLat += selected.latitude;
+        totalLong += selected.longitude;
+
+        LatLng avg = new LatLng(totalLat/(length + 1), totalLong/(length + 1));
         // LatLng avg = new LatLng((totalLat / length + selected.latitude) / 2, (totalLong / length + selected.longitude) / 2);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(avg, 16));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(avg, 15));
     }
 
     @Override
@@ -131,9 +135,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.listView:
                 item.setChecked(true);
-                Intent listIntent = new Intent(MapsActivity.this, ListActivity.class);
-                listIntent.putParcelableArrayListExtra("Restaurants", restaurants);
-                MapsActivity.this.startActivity(listIntent);
+                goBack();
                 return true;
 
             case R.id.mapView:
@@ -158,5 +160,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void goBack() {
+        Intent listIntent = new Intent(MapsActivity.this, ListActivity.class);
+        listIntent.putExtra("LatLng", selectedString);
+        listIntent.putParcelableArrayListExtra("Restaurants", restaurants);
+        MapsActivity.this.startActivity(listIntent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        goBack();
     }
 }

@@ -44,7 +44,7 @@ public class ListActivity extends AppCompatActivity {
     private ArrayList<Restaurant> restaurants;
     private ListView list;
     private Toolbar myToolbar;
-    // private String selectedLocation;
+    private String selectedLocation;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +65,7 @@ public class ListActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String response = extras.getString("Reply");
         restaurants = extras.getParcelableArrayList("Restaurants");
-        // selectedLocation = extras.getString("LatLng");
+        selectedLocation = extras.getString("LatLng");
 
         // coming from SearchActivity
         if (restaurants == null && response != null) {
@@ -342,7 +342,7 @@ public class ListActivity extends AppCompatActivity {
                 item.setChecked(true);
                 Intent mapsIntent = new Intent(ListActivity.this, MapsActivity.class);
                 mapsIntent.putParcelableArrayListExtra("Restaurants", restaurants);
-                // mapsIntent.putExtra("LatLng", selectedLocation);
+                mapsIntent.putExtra("LatLng", selectedLocation);
                 ListActivity.this.startActivity(mapsIntent);
                 return true;
 
@@ -351,8 +351,9 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
+    @Override
+    public void onBackPressed() {
+        Intent searchIntent = new Intent(ListActivity.this, SearchActivity.class);
+        ListActivity.this.startActivity(searchIntent);
+    }
 }

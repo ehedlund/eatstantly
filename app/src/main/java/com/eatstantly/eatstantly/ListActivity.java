@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +27,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.concurrent.ExecutionException;
 
 import org.json.JSONArray;
@@ -40,6 +44,8 @@ public class ListActivity extends AppCompatActivity {
     private static final String defaultIcon = "https://2.bp.blogspot.com/-7_0YNV5xoAY/V8OOvlW_mZI/AAAAAAAAGPQ/NP3JlgApad0YhaCC0djfG3FhD3Wh1mEsACLcB/s1600/default_icon.png";
     private static final String defaultIconSmall = "https://2.bp.blogspot.com/-Jh-79w7LRG8/V8SJfjk2H3I/AAAAAAAAGPg/Nf2_6N7-hgQIYjQU3E95MZyBYQA3qe11QCLcB/s1600/default_icon_small.png";
     private static final double SIMILARITY_THRESHOLD = 0.8;
+    private static final double SECONDS_IN_YEAR = 31536000;
+    private static final String TAG = ListActivity.class.getSimpleName();
     private ArrayList<Restaurant> restaurants;
     private ListView list;
     private Toolbar myToolbar;
@@ -64,6 +70,7 @@ public class ListActivity extends AppCompatActivity {
         String response = extras.getString("Reply");
         restaurants = extras.getParcelableArrayList("Restaurants");
 
+
         // coming from SearchActivity
         if (restaurants == null && response != null) {
             try {
@@ -71,6 +78,7 @@ public class ListActivity extends AppCompatActivity {
                 restaurants = new ArrayList<Restaurant>();
                 JSONArray googleResults = new JSONArray(new JSONObject(response).getString("results"));
                 int length = googleResults.length();
+
 
                 // create Restaurant objects
                 for (int i = 0; i < length; i++) {
@@ -84,6 +92,7 @@ public class ListActivity extends AppCompatActivity {
                 while (i < length) {
                     // get location id
                     String baseURL = "https://api.instagram.com/v1/locations/search?";
+                    
                     Restaurant r = restaurants.get(i);
                     baseURL += "lat=" + r.latitude + "&lng=" + r.longitude;
                     baseURL += "&access_token=" + token;
@@ -147,8 +156,24 @@ public class ListActivity extends AppCompatActivity {
                         }
                         else {
                             JSONArray photoResults = new JSONArray(new JSONObject(photoResponse).getString("data"));
-                            // TODO: sort photos before setting icon!!
-                            int numPhotos = photoResults.length();
+                            ArrayList<JSONObject> photoResultsArray = new ArrayList<JSONObject>();
+                            for (int j = 0; j < photoResults.length(); j++) {
+                                photoResultsArray.add(photoResults.getJSONObject(j));
+                            }
+
+                            r.setScore(photoResults);
+
+                            Collections.sort(photoResultsArray, new Comparator<JSONObject>() {
+                                @Override
+                                public int compare(JSONObject p1, JSONObject p2) {
+                                    Double p1Score = new Double(getPhotoScore(p1));
+                                    Double p2Score = new Double(getPhotoScore(p2));
+                                    Log.e(TAG, p1Score.toString() + " vs " + p2Score.toString());
+                                    return -p1Score.compareTo(p2Score);
+                                }
+                            });
+
+                            int numPhotos = photoResultsArray.size();
                             switch (numPhotos) {
                                 case 0:
                                     r.icon_1 = defaultIcon;
@@ -157,33 +182,35 @@ public class ListActivity extends AppCompatActivity {
                                     r.icon_1_small = defaultIconSmall;
                                     break;
                                 case 1:
-                                    r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_1 = photoResultsArray.get(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
                                     r.icon_2 = defaultIcon;
                                     r.icon_3 = defaultIcon;
-                                    r.icon_1_small = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
+                                    r.icon_1_small = photoResultsArray.get(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
                                     break;
                                 case 2:
-                                    r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                    r.icon_2 = photoResults.getJSONObject(1).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_1 = photoResultsArray.get(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_2 = photoResultsArray.get(1).getJSONObject("images").getJSONObject("low_resolution").getString("url");
                                     r.icon_3 = defaultIcon;
-                                    r.icon_1_small = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
+                                    r.icon_1_small = photoResultsArray.get(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
                                     break;
                                 default:
-                                    r.icon_1 = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                    r.icon_2 = photoResults.getJSONObject(1).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                    r.icon_3 = photoResults.getJSONObject(2).getJSONObject("images").getJSONObject("low_resolution").getString("url");
-                                    r.icon_1_small = photoResults.getJSONObject(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
+                                    r.icon_1 = photoResultsArray.get(0).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_2 = photoResultsArray.get(1).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_3 = photoResultsArray.get(2).getJSONObject("images").getJSONObject("low_resolution").getString("url");
+                                    r.icon_1_small = photoResultsArray.get(0).getJSONObject("images").getJSONObject("thumbnail").getString("url");
                                     break;
                             }
                             i++;
                         }
                     }
                 }
+
             } catch (JSONException e){
                 e.printStackTrace();
             }
         }
         // TODO: sort restaurants in list view
+        orderRestaurants();
         loadListView();
     }
 
@@ -247,7 +274,6 @@ public class ListActivity extends AppCompatActivity {
                 }
 
                 Restaurant r = restaurants.get(position);
-
                 ImageView restaurantIcon = (ImageView)convertView.findViewById(R.id.restaurant_icon);
                 new GetLogo(restaurantIcon).execute(restaurants.get(position).icon_1);
 
@@ -317,6 +343,32 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+    private void orderRestaurants() {
+        Collections.sort(restaurants, new Comparator<Restaurant>() {
+            @Override
+            public int compare(Restaurant r1, Restaurant r2) {
+                Double r1Score = new Double(r1.score);
+                Double r2Score = new Double(r2.score);
+                return -r1Score.compareTo(r2Score);
+            }
+        });
+    }
+
+
+    private double getPhotoScore(JSONObject p) {
+        long unixTime = System.currentTimeMillis() / 1000L;
+        try {
+            double timePosted = p.getDouble("created_time");
+            int likes = p.getJSONObject("likes").getInt("count");
+            double exponential = (timePosted - unixTime) / SECONDS_IN_YEAR;
+            double exponential_function = Math.max(.1, Math.pow(10, exponential));
+            return exponential_function * (likes + 1);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
 
 

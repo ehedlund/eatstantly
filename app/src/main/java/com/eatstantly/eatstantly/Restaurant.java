@@ -3,6 +3,7 @@ package com.eatstantly.eatstantly;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,10 +11,13 @@ import org.json.JSONObject;
  * Created by emilyhedlund on 8/28/16.
  */
 public class Restaurant implements Parcelable {
+
+    private static final double SECONDS_IN_YEAR = 31536000;
     String name;
     String address;
     String latitude;
     String longitude;
+    double score;
     String rating;
     String price;
     String icon_1;
@@ -28,6 +32,7 @@ public class Restaurant implements Parcelable {
             address = js.getString("vicinity");
             latitude = js.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = js.getJSONObject("geometry").getJSONObject("location").getString("lng");
+            score = 0;
             rating = js.getString("rating");
             price = js.getString("price_level");
             icon_1 = null;
@@ -59,6 +64,33 @@ public class Restaurant implements Parcelable {
         this.icon_1_small = data[10];
     }
 
+    public void setScore(JSONArray photoResults) {
+        int numPhotos = photoResults.length();
+        for (int i = 0; i < numPhotos; i++) {
+            try {
+                JSONObject photo = photoResults.getJSONObject(i);
+                this.score += getPhotoScore(photo);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private double getPhotoScore(JSONObject photo) {
+        long unixTime = System.currentTimeMillis() / 1000L;
+        try {
+            double timePosted = photo.getDouble("created_time");
+            double exponential = (timePosted - unixTime) / SECONDS_IN_YEAR;
+            double exponential_function = Math.max(.1, Math.pow(10, exponential));
+            double num_of_likes = photo.getJSONObject("likes").getInt("count");
+            return exponential_function * (num_of_likes + 1);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     @Override
     public int describeContents(){
         return 0;
@@ -77,4 +109,5 @@ public class Restaurant implements Parcelable {
             return new Restaurant[size];
         }
     };
+
 }

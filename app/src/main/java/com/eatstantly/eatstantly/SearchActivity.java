@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -77,7 +76,7 @@ public class SearchActivity extends AppCompatActivity implements GoogleApiClient
         confirmSearch = (Button) findViewById(R.id.confirmSearch);
         useCurrent = (CheckBox) findViewById(R.id.useCurrent);
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        /* distances = (Spinner) findViewById(R.id.distances);
+        distances = (Spinner) findViewById(R.id.distances);
 
         // set up distance spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.distance_array, android.R.layout.simple_spinner_item);
@@ -100,7 +99,7 @@ public class SearchActivity extends AppCompatActivity implements GoogleApiClient
             public void onNothingSelected(AdapterView<?> parent) {
                 distanceSelected = 1;
             }
-        }); */
+        });
 
         // autocomplete fragment
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -148,10 +147,9 @@ public class SearchActivity extends AppCompatActivity implements GoogleApiClient
                                 baseURL += "location=" + latLong + "&";
 
                                 // get radius
-                                // double distInMeters = distanceSelected * metersInMile;
-                                // baseURL += "radius=" + distInMeters + "&";
+                                double distInMeters = distanceSelected * metersInMile;
+                                baseURL += "radius=" + distInMeters + "&";
 
-                                baseURL += "rankby=distance&";
                                 baseURL += "type=restaurant";
 
                                 // make request

@@ -41,32 +41,32 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 
-    <TextView
-        android:id="@+id/spinnerChoice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_below="@+id/useCurrent"
-        android:layout_centerHorizontal="true"
-        android:textSize="20dp"
-        android:textColor="#000000"
-        android:text="Find restaurants within..."/>
+    <!-- <TextView
+      android:id="@+id/spinnerChoice"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="60dp"
+      android:layout_below="@+id/useCurrent"
+      android:layout_centerHorizontal="true"
+      android:textSize="20dp"
+      android:textColor="#000000"
+      android:text="Find restaurants within..."/>
 
-    <Spinner
-        android:id="@+id/distances"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:layout_below="@+id/spinnerChoice"/>
+  <Spinner
+      android:id="@+id/distances"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="5dp"
+      android:layout_below="@+id/spinnerChoice"/> -->
 
-    <Button
-        android:id="@+id/confirmSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp" />
+  <Button
+      android:id="@+id/confirmSearch"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Search"
+      android:layout_alignParentBottom="true"
+      android:layout_centerHorizontal="true"
+      android:layout_marginBottom="50dp" />
 
 </RelativeLayout>

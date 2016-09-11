@@ -82,7 +82,6 @@ public class ListActivity extends AppCompatActivity {
                 JSONArray googleResults = new JSONArray(new JSONObject(response).getString("results"));
                 int length = googleResults.length();
 
-
                 // create Restaurant objects
                 for (int i = 0; i < length; i++) {
                     JSONObject result = googleResults.getJSONObject(i);
@@ -212,7 +211,7 @@ public class ListActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        // TODO: sort restaurants in list view
+
         orderRestaurants();
         loadListView();
     }

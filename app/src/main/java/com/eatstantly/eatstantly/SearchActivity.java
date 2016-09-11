@@ -41,7 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class SearchActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     // constants
-    private static final String key = "AIzaSyAJssY_hmpCAb2NqUB7ZKFFahJEVifmExw";
+    private static final String key = "AIzaSyATmvnrGZJV_KtjnWwvcUQcOXBW-63UkGQ";
     private static final double metersInMile = 1609.34;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private static final String TAG = SearchActivity.class.getSimpleName();
@@ -76,7 +76,7 @@ public class SearchActivity extends AppCompatActivity implements GoogleApiClient
         confirmSearch = (Button) findViewById(R.id.confirmSearch);
         useCurrent = (CheckBox) findViewById(R.id.useCurrent);
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        distances = (Spinner) findViewById(R.id.distances);
+        /* distances = (Spinner) findViewById(R.id.distances);
 
         // set up distance spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.distance_array, android.R.layout.simple_spinner_item);
@@ -99,7 +99,7 @@ public class SearchActivity extends AppCompatActivity implements GoogleApiClient
             public void onNothingSelected(AdapterView<?> parent) {
                 distanceSelected = 1;
             }
-        });
+        }); */
 
         // autocomplete fragment
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -147,9 +147,10 @@ public class SearchActivity extends AppCompatActivity implements GoogleApiClient
                                 baseURL += "location=" + latLong + "&";
 
                                 // get radius
-                                double distInMeters = distanceSelected * metersInMile;
-                                baseURL += "radius=" + distInMeters + "&";
+                                /* double distInMeters = distanceSelected * metersInMile;
+                                baseURL += "radius=" + distInMeters + "&"; */
 
+                                baseURL += "rankby=distance&";
                                 baseURL += "type=restaurant";
 
                                 // make request
